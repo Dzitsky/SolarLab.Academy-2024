@@ -11,7 +11,15 @@ public interface IUserService
     /// Возвращает всех пользователей.
     /// </summary>
     /// <returns>Список пользователей <see cref="UserDto"/>.</returns>
-    Task<IEnumerable<UserDto>> GetUsersAsync(CancellationToken cancellationToken);
+    Task<ResultWithPagination<UserDto>> GetUsersAsync(GetAllUsersRequest request, CancellationToken cancellationToken);
+    
+    /// <summary>
+    /// Получает пользователей по имени.
+    /// </summary>
+    /// <param name="request">Запрос.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Коллекцию моделей пользователей.</returns>
+    Task<IEnumerable<UserDto>> GetUsersByNameAsync(UsersByNameRequest request, CancellationToken cancellationToken);
 
     ValueTask<UserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 

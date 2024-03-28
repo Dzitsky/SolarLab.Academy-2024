@@ -4,6 +4,8 @@ using SolarLab.Academy.AppServices.Users.Repositories;
 using SolarLab.Academy.Contracts.Users;
 using SolarLab.Academy.Domain.Users.Entity;
 using System.Threading;
+using SolarLab.Academy.AppServices.Specifications;
+using SolarLab.Academy.AppServices.Users.Specifications;
 
 namespace SolarLab.Academy.AppServices.Users.Services;
 
@@ -24,10 +26,23 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc />
-    public Task<IEnumerable<UserDto>> GetUsersAsync(CancellationToken cancellationToken)
+    public Task<ResultWithPagination<UserDto>> GetUsersAsync(GetAllUsersRequest request, CancellationToken cancellationToken)
     {
-        return _userRepository.GetAll(cancellationToken);
+        return _userRepository.GetAll(request, cancellationToken);
     }
+
+    public Task<IEnumerable<UserDto>> GetUsersByNameAsync(UsersByNameRequest request, CancellationToken cancellationToken)
+    {
+        Specification<User> specification = new ByNameSpecification(request.Name);
+
+        if (request.IsOlder18)
+        {
+            specification = specification.And(new Older18specification());
+        }
+        
+        return _userRepository.GetAllBySpecification(specification, cancellationToken);
+    }
+
     public async ValueTask<UserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _userRepository.GetByIdAsync(id, cancellationToken);

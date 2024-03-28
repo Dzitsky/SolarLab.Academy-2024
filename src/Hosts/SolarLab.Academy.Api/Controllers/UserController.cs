@@ -30,11 +30,27 @@ public class UserController : ControllerBase
     /// <returns>Список пользователей.</returns>
     [HttpGet]
     [Route("all")]
+    [ProducesResponseType(typeof(ResultWithPagination<UserDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<IActionResult> GetAllUsers([FromQuery] GetAllUsersRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _userService.GetUsersAsync(request, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Возвращает список пользователей по имени..
+    /// </summary>
+    /// <param name="request">Запрос.</param>
+    /// <param name="cancellationToken">Токен отмены операции.</param>
+    /// <returns>Список пользователей.</returns>
+    [HttpGet]
+    [Route("by-name")]
     [ProducesResponseType(typeof(IEnumerable<UserDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<IActionResult> GetAllUsers(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllByName([FromQuery]UsersByNameRequest request, CancellationToken cancellationToken)
     {
-        var result = await _userService.GetUsersAsync(cancellationToken);
+        var result = await _userService.GetUsersByNameAsync(request, cancellationToken);
         return Ok(result);
     }
 
